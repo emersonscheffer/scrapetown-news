@@ -1,24 +1,27 @@
-const express = require('express');
 
-const app = express();
+var express = require("express");
+var mongoose = require("mongoose");
+var exphbs = require("express-handlebars");
 
-const PORT = process.env.PORT || 5000;
+var PORT = process.env.PORT || 5000;
 
-app.use(express.static("public"));
+var app = express();
+
+var routes = require("./routes");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-const exphbs = require("express-handlebars");
+app.use(express.static("public"));
 
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
-const routes = require('./controllers/scrapeControl');
-
 app.use(routes);
 
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/cnet";
 
-app.listen(PORT, () => {
-    console.log("App listening at http://localhost:" + PORT);
+mongoose.connect(MONGODB_URI);
+
+app.listen(PORT, function() {
+  console.log("App is listening on port: " + PORT);
 });
